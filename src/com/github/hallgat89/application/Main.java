@@ -30,6 +30,7 @@ public class Main extends Application {
 	ShipVisual ship;
 
 	ArrayList<KeyCode> input = new ArrayList<>();
+	ArrayList<RocketVisual> rockets = new ArrayList<>();
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -42,7 +43,7 @@ public class Main extends Application {
 	}
 
 	private void loadVisuals() {
-		ship = new ShipVisual(95, 151, new Image("fighter_left.png"), new Image("fighter_right.png"),
+		ship = new ShipVisual(new Image("fighter_left.png"), new Image("fighter_right.png"),
 				new Image("fighter_normal.png"), new Image("exhaust.png"));
 		ship.setPos(400, 400);
 	}
@@ -82,14 +83,14 @@ public class Main extends Application {
 			}
 
 		});
-		
-		theScene.heightProperty().addListener(new ChangeListener<Number>(){
+
+		theScene.heightProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				window_y=newValue.intValue();
+				window_y = newValue.intValue();
 				theCanvas.setHeight(window_y);
 			}
-			
+
 		});
 	}
 
@@ -100,6 +101,18 @@ public class Main extends Application {
 				// TODO Auto-generated method stub
 				handleInput();
 				gc.fillRect(0, 0, window_x, window_y);
+
+				for (RocketVisual v : rockets) {
+					if (v.hasExhaust()) {
+						gc.drawImage(v.exhaust, v.getExhaustX(), v.getExhaustY());
+					}
+					gc.drawImage(v.getImage(), v.getX(), v.getY());
+				}
+
+				drawShip();
+			}
+
+			private void drawShip() {
 				gc.drawImage(ship.exhaust, ship.getExhaustX(), ship.getExhaustY());
 				gc.drawImage(ship.getImage(), ship.getX(), ship.getY());
 			}
@@ -126,6 +139,15 @@ public class Main extends Application {
 		} else if (input.contains(KeyCode.DOWN)) {
 			if (ship.getY() < window_y - ship.getHeight()) {
 				ship.moveDown();
+			}
+		}
+
+		if (input.contains(KeyCode.SPACE)) {
+			if (ship.getX() > 0) {
+				RocketSetup rs = ship.shootRocket();
+				RocketVisual newRocket = new RocketVisual(rs.x, rs.y, rs.left, new Image("rocket1.png"),
+						new Image("exhaust2.png"));
+				rockets.add(newRocket);
 			}
 		}
 

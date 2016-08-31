@@ -26,6 +26,7 @@ public class ShipVisual {
 	State animationState;
 	int x = 0;
 	int y = 0;
+	boolean rocketDirection=true; //left-right
 
 	enum State {
 		NORMAL, LEFTMOST, RIGHTMOST, NORMAL_LEFT, NORMAL_RIGHT, LEFT_NORMAL, RIGHT_NORMAL;
@@ -91,11 +92,11 @@ public class ShipVisual {
 		}
 	}
 
-	public ShipVisual(int width, int height, Image spritesLeft, Image spritesRight, Image spriteNormal,Image exhaust) {
+	public ShipVisual(Image spritesLeft, Image spritesRight, Image spriteNormal,Image exhaust) {
 		super();
 		this.exhaust=exhaust;
-		this.width = width;
-		this.height = height;
+		this.width = (int)spriteNormal.getWidth();
+		this.height = (int)spriteNormal.getHeight();
 		this.spritesLeft = spritesLeft;
 		this.spritesRight = spritesRight;
 		this.spriteNormal = spriteNormal;
@@ -216,5 +217,11 @@ public class ShipVisual {
 	public void stop() {
 		exhaustOffset=0;
 		animBackToNormal();
+	}
+	
+	public RocketSetup shootRocket()
+	{
+		rocketDirection=!rocketDirection;
+		 return new RocketSetup(this.x, this.y, rocketDirection);
 	}
 }

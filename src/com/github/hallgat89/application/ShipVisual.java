@@ -176,7 +176,7 @@ public class ShipVisual {
 	}
 
 	public void moveDown() {
-		y += FORESPEED;
+		y += SIDESPEED;
 	}
 
 	public void moveLeft() {

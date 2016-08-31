@@ -1,5 +1,7 @@
 package com.github.hallgat89.application;
 
+import java.util.ArrayList;
+
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -9,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 
@@ -23,6 +26,8 @@ public class Main extends Application {
 	int window_y = 800;
 
 	ShipVisual ship;
+	
+	ArrayList<KeyCode> input = new ArrayList<>();
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -41,25 +46,18 @@ public class Main extends Application {
 	}
 
 	private void setupKeyHandlers() {
+		
+		
+		
 		theScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 
 			@Override
 			public void handle(KeyEvent event) {
 				
-				String code=event.getCode().toString();
-
-				if (code.contains("UP")) {
-					ship.moveUp();
-				}
-				if (code.contains("DOWN")) {
-					ship.moveDown();
-				}
-				if (code.contains("LEFT")) {
-					ship.moveLeft();
-				}
-				if (code.contains("RIGHT")) {
-					ship.moveRight();
-				}
+				KeyCode code = event.getCode();
+				// only add once... prevent duplicates
+				if (!input.contains(code))
+					input.add(code);
 
 			}
 		});
@@ -68,14 +66,9 @@ public class Main extends Application {
 
 			@Override
 			public void handle(KeyEvent event) {
-				String code=event.getCode().toString();
-
-				if (code.contains("LEFT")) {
-					ship.stop();
-				}
-				if (code.contains("RIGHT")) {
-					ship.stop();
-				}
+				KeyCode code = event.getCode();
+				if (input.contains(code))
+					input.remove(code);
 
 				
 			}
@@ -90,10 +83,35 @@ public class Main extends Application {
 			@Override
 			public void handle(long arg0) {
 				// TODO Auto-generated method stub
+				handleInput();
 				gc.fillRect(0, 0, window_x, window_y);
 				gc.drawImage(ship.getImage(), ship.getX(), ship.getY());
 			}
 		}.start();
+	}
+	
+	private void handleInput()
+	{
+		if(input.contains(KeyCode.LEFT))
+		{
+			ship.moveLeft();
+		}else if(input.contains(KeyCode.RIGHT))
+		{
+			ship.moveRight();
+		}else{
+			ship.stop();
+		}
+		
+		if(input.contains(KeyCode.UP))
+		{
+			ship.moveUp();
+		}else if(input.contains(KeyCode.DOWN))
+		{
+			ship.moveDown();
+		}
+			
+		
+		
 	}
 
 	private void initEnvironment(Stage primaryStage) {

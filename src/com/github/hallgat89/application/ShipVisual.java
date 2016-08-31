@@ -214,6 +214,7 @@ public class ShipVisual {
 	}
 
 	public void stop() {
+		exhaustOffset=0;
 		animBackToNormal();
 	}
 }

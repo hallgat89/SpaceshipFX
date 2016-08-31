@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import javafx.scene.Group;
@@ -41,7 +43,7 @@ public class Main extends Application {
 
 	private void loadVisuals() {
 		ship = new ShipVisual(95, 151, new Image("fighter_left.png"), new Image("fighter_right.png"),
-				new Image("fighter_normal.png"),new Image("exhaust.png"));
+				new Image("fighter_normal.png"), new Image("exhaust.png"));
 		ship.setPos(400, 400);
 	}
 
@@ -72,6 +74,23 @@ public class Main extends Application {
 
 		});
 
+		theScene.widthProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				window_x = newValue.intValue();
+				theCanvas.setWidth(window_x);
+			}
+
+		});
+		
+		theScene.heightProperty().addListener(new ChangeListener<Number>(){
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				window_y=newValue.intValue();
+				theCanvas.setHeight(window_y);
+			}
+			
+		});
 	}
 
 	private void mainLoop() {
@@ -93,7 +112,7 @@ public class Main extends Application {
 				ship.moveLeft();
 			}
 		} else if (input.contains(KeyCode.RIGHT)) {
-			if (ship.getX() < window_x-ship.getWidth()) {
+			if (ship.getX() < window_x - ship.getWidth()) {
 				ship.moveRight();
 			}
 		} else {
@@ -105,7 +124,7 @@ public class Main extends Application {
 				ship.moveUp();
 			}
 		} else if (input.contains(KeyCode.DOWN)) {
-			if (ship.getY() < window_y-ship.getHeight()) {
+			if (ship.getY() < window_y - ship.getHeight()) {
 				ship.moveDown();
 			}
 		}

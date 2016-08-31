@@ -41,7 +41,7 @@ public class Main extends Application {
 
 	private void loadVisuals() {
 		ship = new ShipVisual(95, 151, new Image("fighter_left.png"), new Image("fighter_right.png"),
-				new Image("fighter_normal.png"));
+				new Image("fighter_normal.png"),new Image("exhaust.png"));
 		ship.setPos(400, 400);
 	}
 
@@ -81,6 +81,7 @@ public class Main extends Application {
 				// TODO Auto-generated method stub
 				handleInput();
 				gc.fillRect(0, 0, window_x, window_y);
+				gc.drawImage(ship.exhaust, ship.getExhaustX(), ship.getExhaustY());
 				gc.drawImage(ship.getImage(), ship.getX(), ship.getY());
 			}
 		}.start();

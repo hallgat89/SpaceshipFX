@@ -11,14 +11,18 @@ public class ShipVisual {
 	final int ACC = 10;
 	final int SIDESPEED = 5;
 	final int FORESPEED = 10;
+	final int EXHAUSTW=25;
 	final int width;
 	final int height;
+	final int DEFAULT_EXHAUST_OFFSET=50;
+	int exhaustOffset=0;
 	int frameCounter = 0;
 	int currentFrame = 0;
 	int currentAcceleration = 0;
 	final Image spritesLeft;
 	final Image spritesRight;
 	final Image spriteNormal;
+	final Image exhaust;
 	State animationState;
 	int x = 0;
 	int y = 0;
@@ -87,8 +91,9 @@ public class ShipVisual {
 		}
 	}
 
-	public ShipVisual(int width, int height, Image spritesLeft, Image spritesRight, Image spriteNormal) {
+	public ShipVisual(int width, int height, Image spritesLeft, Image spritesRight, Image spriteNormal,Image exhaust) {
 		super();
+		this.exhaust=exhaust;
 		this.width = width;
 		this.height = height;
 		this.spritesLeft = spritesLeft;
@@ -110,6 +115,21 @@ public class ShipVisual {
 				}
 			}
 		}
+	}
+	
+	public Image getExhaust()
+	{
+		return exhaust;
+	}
+	
+	public int getExhaustX()
+	{
+		return this.x-EXHAUSTW/2;
+	}
+	
+	public int getExhaustY()
+	{
+		return this.y+exhaustOffset+DEFAULT_EXHAUST_OFFSET;
 	}
 
 	public Image getImage() {
@@ -172,19 +192,23 @@ public class ShipVisual {
 	}
 
 	public void moveUp() {
+		exhaustOffset=+20;
 		y -= FORESPEED;
 	}
 
 	public void moveDown() {
+		exhaustOffset=-20;
 		y += SIDESPEED;
 	}
 
 	public void moveLeft() {
+		exhaustOffset=0;
 		x -= SIDESPEED;
 		animLeft();
 	}
 
 	public void moveRight() {
+		exhaustOffset=0;
 		x += SIDESPEED;
 		animRight();
 	}

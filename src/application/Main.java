@@ -1,6 +1,11 @@
-package com.github.hallgat89.application;
+package application;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+
+import com.github.hallgat89.application.RocketSetup;
+import com.github.hallgat89.application.RocketVisual;
+import com.github.hallgat89.application.ShipVisual;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -15,7 +20,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.BorderPane;
 
 public class Main extends Application {
 
@@ -102,18 +106,31 @@ public class Main extends Application {
 				handleInput();
 				gc.fillRect(0, 0, window_x, window_y);
 
+				drawRockets();
+				drawShip();
+				cleanUp();
+
+			}
+
+			private void cleanUp() {
+				Iterator<RocketVisual> ri = rockets.iterator();
+				while (ri.hasNext()) {
+					if (ri.next().getX() < -100)
+						ri.remove();
+				}
+			}
+
+			private void drawRockets() {
 				for (RocketVisual v : rockets) {
 					if (v.hasExhaust()) {
-						gc.drawImage(v.exhaust, v.getExhaustX(), v.getExhaustY());
+						gc.drawImage(v.getExhaust(), v.getExhaustX(), v.getExhaustY());
 					}
 					gc.drawImage(v.getImage(), v.getX(), v.getY());
 				}
-
-				drawShip();
 			}
 
 			private void drawShip() {
-				gc.drawImage(ship.exhaust, ship.getExhaustX(), ship.getExhaustY());
+				gc.drawImage(ship.getExhaust(), ship.getExhaustX(), ship.getExhaustY());
 				gc.drawImage(ship.getImage(), ship.getX(), ship.getY());
 			}
 		}.start();
@@ -143,7 +160,7 @@ public class Main extends Application {
 		}
 
 		if (input.contains(KeyCode.SPACE)) {
-			if (ship.getX() > 0) {
+			if (ship.hasRocket()) {
 				RocketSetup rs = ship.shootRocket();
 				RocketVisual newRocket = new RocketVisual(rs.x, rs.y, rs.left, new Image("rocket1.png"),
 						new Image("exhaust2.png"));
@@ -155,6 +172,8 @@ public class Main extends Application {
 
 	private void initEnvironment(Stage primaryStage) {
 		primaryStage.setTitle("Woooosh!");
+		primaryStage.setMaximized(true);
+
 		root = new Group();
 		theScene = new Scene(root);
 		primaryStage.setScene(theScene);

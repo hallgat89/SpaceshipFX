@@ -11,14 +11,20 @@ public class ShipVisual {
 	final int ACC = 10;
 	final int SIDESPEED = 5;
 	final int FORESPEED = 10;
-	final int EXHAUSTW=25;
+	final int RELOADTIME=30;
+	
+	int exhaustWidth=25;
 	final int width;
 	final int height;
 	final int DEFAULT_EXHAUST_OFFSET=50;
+	
 	int exhaustOffset=0;
 	int frameCounter = 0;
 	int currentFrame = 0;
 	int currentAcceleration = 0;
+	int reloadCounter=0;
+	 boolean rocket=true;
+	
 	final Image spritesLeft;
 	final Image spritesRight;
 	final Image spriteNormal;
@@ -101,10 +107,18 @@ public class ShipVisual {
 		this.spritesRight = spritesRight;
 		this.spriteNormal = spriteNormal;
 		this.animationState = State.getDefault();
+		this.exhaustWidth=(int)exhaust.getWidth();
 	}
 
 	private void updateSprite() {
 		frameCounter++;
+		if(!rocket)reloadCounter++;
+		if(reloadCounter>RELOADTIME)
+		{
+			rocket=true;
+			reloadCounter=0;
+		}
+		
 		if (frameCounter >= FRAMESPEED) {
 			frameCounter = 0;
 			if (currentFrame < FRAMES) {
@@ -125,7 +139,7 @@ public class ShipVisual {
 	
 	public int getExhaustX()
 	{
-		return this.x-EXHAUSTW/2;
+		return this.x-exhaustWidth/2;
 	}
 	
 	public int getExhaustY()
@@ -219,8 +233,14 @@ public class ShipVisual {
 		animBackToNormal();
 	}
 	
+	public boolean hasRocket()
+	{
+		return rocket;
+	}
+	
 	public RocketSetup shootRocket()
 	{
+		rocket=false;
 		rocketDirection=!rocketDirection;
 		 return new RocketSetup(this.x, this.y, rocketDirection);
 	}

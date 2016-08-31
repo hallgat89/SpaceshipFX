@@ -26,7 +26,7 @@ public class Main extends Application {
 	int window_y = 800;
 
 	ShipVisual ship;
-	
+
 	ArrayList<KeyCode> input = new ArrayList<>();
 
 	@Override
@@ -46,14 +46,12 @@ public class Main extends Application {
 	}
 
 	private void setupKeyHandlers() {
-		
-		
-		
+
 		theScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 
 			@Override
 			public void handle(KeyEvent event) {
-				
+
 				KeyCode code = event.getCode();
 				// only add once... prevent duplicates
 				if (!input.contains(code))
@@ -61,8 +59,8 @@ public class Main extends Application {
 
 			}
 		});
-		
-		theScene.setOnKeyReleased(new EventHandler<KeyEvent>(){
+
+		theScene.setOnKeyReleased(new EventHandler<KeyEvent>() {
 
 			@Override
 			public void handle(KeyEvent event) {
@@ -70,10 +68,8 @@ public class Main extends Application {
 				if (input.contains(code))
 					input.remove(code);
 
-				
 			}
-			
-			
+
 		});
 
 	}
@@ -89,29 +85,30 @@ public class Main extends Application {
 			}
 		}.start();
 	}
-	
-	private void handleInput()
-	{
-		if(input.contains(KeyCode.LEFT))
-		{
-			ship.moveLeft();
-		}else if(input.contains(KeyCode.RIGHT))
-		{
-			ship.moveRight();
-		}else{
+
+	private void handleInput() {
+		if (input.contains(KeyCode.LEFT)) {
+			if (ship.getX() > 0) {
+				ship.moveLeft();
+			}
+		} else if (input.contains(KeyCode.RIGHT)) {
+			if (ship.getX() < window_x-ship.getWidth()) {
+				ship.moveRight();
+			}
+		} else {
 			ship.stop();
 		}
-		
-		if(input.contains(KeyCode.UP))
-		{
-			ship.moveUp();
-		}else if(input.contains(KeyCode.DOWN))
-		{
-			ship.moveDown();
+
+		if (input.contains(KeyCode.UP)) {
+			if (ship.getY() > 0) {
+				ship.moveUp();
+			}
+		} else if (input.contains(KeyCode.DOWN)) {
+			if (ship.getY() < window_y-ship.getHeight()) {
+				ship.moveDown();
+			}
 		}
-			
-		
-		
+
 	}
 
 	private void initEnvironment(Stage primaryStage) {

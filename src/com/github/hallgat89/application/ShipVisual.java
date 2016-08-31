@@ -155,7 +155,7 @@ public class ShipVisual {
 	}
 
 	public int getWidth() {
-		return this.getWidth();
+		return this.width;
 	}
 
 	public void setPos(int x, int y) {
@@ -164,11 +164,11 @@ public class ShipVisual {
 	}
 
 	public int getX() {
-		return this.x;
+		return this.x-(width/2);
 	}
 
 	public int getY() {
-		return this.y;
+		return this.y-(height/2);
 	}
 
 	public void moveUp() {

@@ -8,7 +8,7 @@ public class ShipVisual {
 
 	final int FRAMESPEED = 5;
 	final int FRAMES = 4; // n-1
-	final int ACC = 10;
+	final int MAXACC = 10;
 	final int SIDESPEED = 5;
 	final int FORESPEED = 10;
 	final int RELOADTIME=30;
@@ -241,7 +241,18 @@ public class ShipVisual {
 	public RocketSetup shootRocket()
 	{
 		rocket=false;
-		rocketDirection=!rocketDirection;
+		if(animationState.equals(State.NORMAL))
+		{
+			rocketDirection=!rocketDirection;
+		}
+		if(animationState.equals(State.LEFTMOST)||animationState.equals(State.NORMAL_LEFT))
+		{
+			rocketDirection=true;
+		}
+		if(animationState.equals(State.RIGHTMOST)||animationState.equals(State.NORMAL_RIGHT))
+		{
+			rocketDirection=false;
+		}
 		 return new RocketSetup(this.x, this.y, rocketDirection);
 	}
 }

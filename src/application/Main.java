@@ -2,6 +2,8 @@ package application;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import com.github.hallgat89.application.RocketSetup;
 import com.github.hallgat89.application.RocketVisual;
@@ -34,7 +36,11 @@ public class Main extends Application {
 	ShipVisual ship;
 
 	ArrayList<KeyCode> input = new ArrayList<>();
-	ArrayList<RocketVisual> rockets = new ArrayList<>();
+
+	Queue<RocketVisual> rocketsInUse = new LinkedList<>();
+	Queue<RocketVisual> rocketsUnused = new LinkedList<>();
+
+	// ArrayList<RocketVisual> rockets = new ArrayList<>();
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -112,28 +118,33 @@ public class Main extends Application {
 
 			}
 
-			private void cleanUp() {
-				Iterator<RocketVisual> ri = rockets.iterator();
-				while (ri.hasNext()) {
-					if (ri.next().getX() < -100)
-						ri.remove();
-				}
-			}
-
-			private void drawRockets() {
-				for (RocketVisual v : rockets) {
-					if (v.hasExhaust()) {
-						gc.drawImage(v.getExhaust(), v.getExhaustX(), v.getExhaustY());
-					}
-					gc.drawImage(v.getImage(), v.getX(), v.getY());
-				}
-			}
-
-			private void drawShip() {
-				gc.drawImage(ship.getExhaust(), ship.getExhaustX(), ship.getExhaustY());
-				gc.drawImage(ship.getImage(), ship.getX(), ship.getY());
-			}
 		}.start();
+	}
+
+	private void cleanUp() {
+		Iterator<RocketVisual> ri = rocketsInUse.iterator();
+		while (ri.hasNext()) {
+			RocketVisual rv = ri.next();
+			if (rv.getX() < -100) {
+				rocketsUnused.add(rv);
+				ri.remove();
+			}
+		}
+	}
+
+	private void drawRockets() {
+
+		for (RocketVisual v : rocketsInUse) {
+			if (v.hasExhaust()) {
+				gc.drawImage(v.getExhaust(), v.getExhaustX(), v.getExhaustY());
+			}
+			gc.drawImage(v.getImage(), v.getX(), v.getY());
+		}
+	}
+
+	private void drawShip() {
+		gc.drawImage(ship.getExhaust(), ship.getExhaustX(), ship.getExhaustY());
+		gc.drawImage(ship.getImage(), ship.getX(), ship.getY());
 	}
 
 	private void handleInput() {
@@ -162,9 +173,17 @@ public class Main extends Application {
 		if (input.contains(KeyCode.SPACE)) {
 			if (ship.hasRocket()) {
 				RocketSetup rs = ship.shootRocket();
-				RocketVisual newRocket = new RocketVisual(rs.x, rs.y, rs.left, new Image("rocket1.png"),
-						new Image("exhaust2.png"));
-				rockets.add(newRocket);
+
+				if (rocketsUnused.isEmpty()) {
+					RocketVisual newRocket = new RocketVisual(rs.x, rs.y, rs.left, new Image("rocket1.png"),
+							new Image("exhaust2.png"));
+					rocketsInUse.add(newRocket);
+				} else {
+					RocketVisual reusedRocket = rocketsUnused.poll();
+					reusedRocket.setPos(rs.x, rs.y);
+					reusedRocket.setDirection(rs.left);
+					rocketsInUse.add(reusedRocket);
+				}
 			}
 		}
 

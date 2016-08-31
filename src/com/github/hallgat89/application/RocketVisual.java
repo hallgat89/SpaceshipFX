@@ -101,5 +101,14 @@ public class RocketVisual {
 	{
 		return rocketState==State.THRUST;
 	}
+	
+	public void setDirection(boolean isLeft)
+	{
+		if(isLeft)rocketState=State.LEFT;
+		else rocketState=State.RIGHT;
+		counter = 0;
+		exhaustOffset = 0;
+		
+	}
 
 }

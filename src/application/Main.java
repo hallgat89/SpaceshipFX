@@ -39,7 +39,7 @@ import javafx.scene.paint.Paint;
 public class Main extends Application {
 
 	final int CLOUDSBACK = 1;
-	final int CLOUDSFORE = 1;
+	final int CLOUDSFORE = 2;
 
 	// Group root;
 	StackPane root;
@@ -211,13 +211,13 @@ public class Main extends Application {
 
 		for (CloudVisual v : cloudsInBack) {
 			if (v.getY() > window_y) {
-				v.setPosition(rnd.nextInt(window_x), -v.getHeight());
+				v.setPosition(rnd.nextInt(window_x*2)-window_x, -v.getHeight());
 			}
 		}
 		
 		for (CloudVisual v : cloudsInFore) {
 			if (v.getY() > window_y) {
-				v.setPosition(rnd.nextInt(window_x), -v.getHeight());
+				v.setPosition(rnd.nextInt(window_x*2)-window_x, -v.getHeight());
 			}
 		}
 	}

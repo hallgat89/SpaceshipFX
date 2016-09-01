@@ -2,6 +2,7 @@ package com.github.hallgat89.application;
 
 import java.nio.channels.IllegalSelectorException;
 
+import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
@@ -15,7 +16,6 @@ public class ShipVisual {
 	final int FORESPEED = 10;
 	final int RELOADTIME = 30;
 
-	int exhaustWidth = 25;
 	final int width;
 	final int height;
 	final int DEFAULT_EXHAUST_OFFSET = 50;
@@ -92,7 +92,6 @@ public class ShipVisual {
 		}
 		
 		this.animationState = State.getDefault();
-		this.exhaustWidth = (int) exhaust.getWidth();
 	}
 	
 	private void animRight() {
@@ -155,12 +154,24 @@ public class ShipVisual {
 	}
 
 	public int getExhaustX() {
-		return this.x - exhaustWidth / 2;
+		return (int) (this.x+ - exhaust.getWidth() / 2);
 	}
 
 	public int getExhaustY() {
 		return this.y + exhaustOffset + DEFAULT_EXHAUST_OFFSET;
 	}
+	
+	public Rectangle2D getRect()
+	{
+		return new Rectangle2D(getX(), getY(), width, height);
+	}
+	
+	public Rectangle2D getFullRect()
+	{
+		return new Rectangle2D(getX(), getY(), width, height+exhaust.getHeight()+5);
+	}
+	
+
 
 	public Image getImage() {
 		if (updateSprite()) {

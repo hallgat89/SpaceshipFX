@@ -1,11 +1,11 @@
 package com.github.hallgat89.application;
 
+import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 
 public class RocketVisual {
 
-	final int DEFAULT_EXHAUST_OFFSET = 70;
-	final int EXHAUSTW;
+	// final int DEFAULT_EXHAUST_OFFSET = 70;
 	final int VSPEED = 15;
 	final int HSPEED = 1;
 	final int INACTIVETIME = 50;
@@ -33,7 +33,6 @@ public class RocketVisual {
 			this.rocketState = State.RIGHT;
 		this.image = image;
 		this.exhaust = exhaust;
-		this.EXHAUSTW=(int) exhaust.getWidth();
 	}
 
 	enum State {
@@ -68,19 +67,18 @@ public class RocketVisual {
 
 	private void updateSprite() {
 		counter++;
-		if (counter >= INACTIVETIME && rocketState != State.THRUST ){
+		if (counter >= INACTIVETIME && rocketState != State.THRUST) {
 			rocketState = State.THRUST;
 		} else {
 			if (rocketState == State.LEFT) {
-				this.x-=HSPEED;
+				this.x -= HSPEED;
 			}
 			if (rocketState == State.RIGHT) {
-				this.x+=HSPEED;
+				this.x += HSPEED;
 			}
 		}
-		if (rocketState==State.THRUST)
-		{
-			this.y-=VSPEED;
+		if (rocketState == State.THRUST) {
+			this.y -= VSPEED;
 		}
 
 	}
@@ -90,25 +88,37 @@ public class RocketVisual {
 	}
 
 	public int getExhaustX() {
-		return this.x-EXHAUSTW/2;
+		return (int) (this.x - exhaust.getWidth() / 2);
 	}
 
 	public int getExhaustY() {
-		return this.getY() + exhaustOffset + DEFAULT_EXHAUST_OFFSET;
+		// return this.getY() + exhaustOffset + DEFAULT_EXHAUST_OFFSET;
+		return this.getY() + this.height;
 	}
-	
-	public boolean hasExhaust()
-	{
-		return rocketState==State.THRUST;
+
+	public Rectangle2D getRect() {
+		return new Rectangle2D(getX(), getY(), width, height);
 	}
-	
-	public void setDirection(boolean isLeft)
-	{
-		if(isLeft)rocketState=State.LEFT;
-		else rocketState=State.RIGHT;
+
+	public Rectangle2D getFullRect() {
+		int w = (int) Math.max(this.width, exhaust.getWidth());
+		int h = (int) (this.height + exhaust.getHeight());
+		return new Rectangle2D(this.x - w / 2, this.y - height / 2, w, h);
+
+	}
+
+	public boolean hasExhaust() {
+		return rocketState == State.THRUST;
+	}
+
+	public void setDirection(boolean isLeft) {
+		if (isLeft)
+			rocketState = State.LEFT;
+		else
+			rocketState = State.RIGHT;
 		counter = 0;
 		exhaustOffset = 0;
-		
+
 	}
 
 }

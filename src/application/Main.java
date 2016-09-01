@@ -1,5 +1,6 @@
 package application;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -14,6 +15,8 @@ import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.geometry.Rectangle2D;
+import javafx.geometry.Side;
 import javafx.stage.Stage;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -22,10 +25,18 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Paint;
 
 public class Main extends Application {
 
-	Group root;
+	// Group root;
+	StackPane root;
 	Scene theScene;
 	Canvas theCanvas;
 	GraphicsContext gc;
@@ -40,6 +51,9 @@ public class Main extends Application {
 	Queue<RocketVisual> rocketsInUse = new LinkedList<>();
 	Queue<RocketVisual> rocketsUnused = new LinkedList<>();
 
+	Image spaceBg;
+	BackgroundImage bg;
+
 	// ArrayList<RocketVisual> rockets = new ArrayList<>();
 
 	@Override
@@ -53,9 +67,13 @@ public class Main extends Application {
 	}
 
 	private void loadVisuals() {
+
+		spaceBg = new Image("spacebg.jpg");
+		updateBg();
+
 		ship = new ShipVisual(new Image("fighter_left.png"), new Image("fighter_right.png"),
 				new Image("fighter_normal.png"), new Image("exhaust.png"));
-		ship.setPos(window_x/2, window_y/2);
+		ship.setPos(window_x / 2, window_y / 2);
 	}
 
 	private void setupKeyHandlers() {
@@ -90,6 +108,7 @@ public class Main extends Application {
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 				window_x = newValue.intValue();
 				theCanvas.setWidth(window_x);
+				updateBg();
 			}
 
 		});
@@ -99,23 +118,34 @@ public class Main extends Application {
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 				window_y = newValue.intValue();
 				theCanvas.setHeight(window_y);
+				updateBg();
 			}
 
 		});
+	}
+
+	private void updateBg() {
+		bg = new BackgroundImage(spaceBg, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
+				new BackgroundPosition(Side.LEFT, 0, false, Side.TOP, 0, false),
+				new BackgroundSize(window_x, window_y, false, false, false, false));
+
+		root.setBackground(new Background(bg));
+
 	}
 
 	private void mainLoop() {
 		new AnimationTimer() {
 			@Override
 			public void handle(long arg0) {
-				// TODO Auto-generated method stub
 				handleInput();
-				gc.fillRect(0, 0, window_x, window_y);
-
+				// gc.clearRect(0, 0, window_x, window_y);
+				clearRockets();
+				clearShip(); 
+				
 				drawRockets();
 				drawShip();
+				
 				cleanUp();
-
 			}
 
 		}.start();
@@ -125,11 +155,25 @@ public class Main extends Application {
 		Iterator<RocketVisual> ri = rocketsInUse.iterator();
 		while (ri.hasNext()) {
 			RocketVisual rv = ri.next();
-			if (rv.getX() < -100) {
+			if (rv.getY() < -rv.getFullRect().getHeight()) {
 				rocketsUnused.add(rv);
 				ri.remove();
 			}
 		}
+	}
+
+	private void clearRockets() {
+		for (RocketVisual v : rocketsInUse) {
+				clearRect(v.getFullRect());
+		}
+	}
+
+	private void clearShip() {
+		clearRect(ship.getFullRect());
+	}
+
+	private void clearRect(Rectangle2D rect) {
+		gc.clearRect(rect.getMinX(), rect.getMinY(), rect.getWidth(), rect.getHeight());
 	}
 
 	private void drawRockets() {
@@ -194,8 +238,8 @@ public class Main extends Application {
 		primaryStage.setMaximized(true);
 		primaryStage.setMinHeight(window_y);
 		primaryStage.setMinWidth(window_x);
-		
-		root = new Group();
+
+		root = new StackPane();
 		theScene = new Scene(root);
 		primaryStage.setScene(theScene);
 		theCanvas = new Canvas(window_x, window_y);

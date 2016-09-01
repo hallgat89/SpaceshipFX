@@ -55,7 +55,7 @@ public class Main extends Application {
 	private void loadVisuals() {
 		ship = new ShipVisual(new Image("fighter_left.png"), new Image("fighter_right.png"),
 				new Image("fighter_normal.png"), new Image("exhaust.png"));
-		ship.setPos(400, 400);
+		ship.setPos(window_x/2, window_y/2);
 	}
 
 	private void setupKeyHandlers() {

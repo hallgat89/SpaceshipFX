@@ -1,5 +1,7 @@
 package com.github.hallgat89.application;
 
+import java.nio.channels.IllegalSelectorException;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
@@ -11,28 +13,29 @@ public class ShipVisual {
 	final int MAXACC = 10;
 	final int SIDESPEED = 5;
 	final int FORESPEED = 10;
-	final int RELOADTIME=30;
-	
-	int exhaustWidth=25;
+	final int RELOADTIME = 30;
+
+	int exhaustWidth = 25;
 	final int width;
 	final int height;
-	final int DEFAULT_EXHAUST_OFFSET=50;
-	
-	int exhaustOffset=0;
+	final int DEFAULT_EXHAUST_OFFSET = 50;
+
+	int exhaustOffset = 0;
 	int frameCounter = 0;
 	int currentFrame = 0;
 	int currentAcceleration = 0;
-	int reloadCounter=0;
-	 boolean rocket=true;
-	
-	final Image spritesLeft;
-	final Image spritesRight;
+	int reloadCounter = 0;
+	boolean rocket = true;
+
+	final Image[] spritesLeft;
+	final Image[] spritesRight;
 	final Image spriteNormal;
 	final Image exhaust;
+	Image currentImage;
 	State animationState;
 	int x = 0;
 	int y = 0;
-	boolean rocketDirection=true; //left-right
+	boolean rocketDirection = true; // left-right
 
 	enum State {
 		NORMAL, LEFTMOST, RIGHTMOST, NORMAL_LEFT, NORMAL_RIGHT, LEFT_NORMAL, RIGHT_NORMAL;
@@ -69,8 +72,31 @@ public class ShipVisual {
 
 	};
 
+	public ShipVisual(Image spritesLeft, Image spritesRight, Image spriteNormal, Image exhaust) {
+		super();
+		this.exhaust = exhaust;
+		this.width = (int) spriteNormal.getWidth();
+		this.height = (int) spriteNormal.getHeight();
+		this.spriteNormal = spriteNormal;
+		this.currentImage=spriteNormal;
+		this.spritesLeft = new Image[FRAMES + 1];
+		PixelReader readerLeft = spritesLeft.getPixelReader();
+		for (int i = 0; i <= FRAMES; i++) {
+			this.spritesLeft[i] = new WritableImage(readerLeft, i * width, 0, width, height);
+		}
+		
+		this.spritesRight = new Image[FRAMES + 1];
+		PixelReader readerRight = spritesRight.getPixelReader();
+		for (int i = 0; i <= FRAMES; i++) {
+			this.spritesRight[i] = new WritableImage(readerRight, i * width, 0, width, height);
+		}
+		
+		this.animationState = State.getDefault();
+		this.exhaustWidth = (int) exhaust.getWidth();
+	}
+	
 	private void animRight() {
-		if (animationState != State.NORMAL_RIGHT  && animationState!=State.RIGHTMOST) {
+		if (animationState != State.NORMAL_RIGHT && animationState != State.RIGHTMOST) {
 			currentFrame = 0;
 			frameCounter = 0;
 			this.animationState = State.NORMAL_RIGHT;
@@ -78,7 +104,7 @@ public class ShipVisual {
 	}
 
 	private void animLeft() {
-		if (animationState != State.NORMAL_LEFT && animationState!=State.LEFTMOST) {
+		if (animationState != State.NORMAL_LEFT && animationState != State.LEFTMOST) {
 			currentFrame = 0;
 			frameCounter = 0;
 			this.animationState = State.NORMAL_LEFT;
@@ -98,28 +124,19 @@ public class ShipVisual {
 		}
 	}
 
-	public ShipVisual(Image spritesLeft, Image spritesRight, Image spriteNormal,Image exhaust) {
-		super();
-		this.exhaust=exhaust;
-		this.width = (int)spriteNormal.getWidth();
-		this.height = (int)spriteNormal.getHeight();
-		this.spritesLeft = spritesLeft;
-		this.spritesRight = spritesRight;
-		this.spriteNormal = spriteNormal;
-		this.animationState = State.getDefault();
-		this.exhaustWidth=(int)exhaust.getWidth();
-	}
 
-	private void updateSprite() {
+	private boolean updateSprite() {
 		frameCounter++;
-		if(!rocket)reloadCounter++;
-		if(reloadCounter>RELOADTIME)
-		{
-			rocket=true;
-			reloadCounter=0;
+		boolean wasupdate = false;
+		if (!rocket)
+			reloadCounter++;
+		if (reloadCounter > RELOADTIME) {
+			rocket = true;
+			reloadCounter = 0;
 		}
-		
+
 		if (frameCounter >= FRAMESPEED) {
+			wasupdate = true;
 			frameCounter = 0;
 			if (currentFrame < FRAMES) {
 				currentFrame++;
@@ -130,59 +147,54 @@ public class ShipVisual {
 				}
 			}
 		}
+		return wasupdate;
 	}
-	
-	public Image getExhaust()
-	{
+
+	public Image getExhaust() {
 		return exhaust;
 	}
-	
-	public int getExhaustX()
-	{
-		return this.x-exhaustWidth/2;
+
+	public int getExhaustX() {
+		return this.x - exhaustWidth / 2;
 	}
-	
-	public int getExhaustY()
-	{
-		return this.y+exhaustOffset+DEFAULT_EXHAUST_OFFSET;
+
+	public int getExhaustY() {
+		return this.y + exhaustOffset + DEFAULT_EXHAUST_OFFSET;
 	}
 
 	public Image getImage() {
-		updateSprite();
-		Image imageToReturn;
-		PixelReader reader;
-		switch (this.animationState) {
-		case NORMAL:
-			imageToReturn = spriteNormal;
-			break;
-		case LEFTMOST:
-			reader = spritesLeft.getPixelReader();
-			imageToReturn = new WritableImage(reader, FRAMES * width, 0, width, height);
-			break;
-		case RIGHTMOST:
-			reader = spritesRight.getPixelReader();
-			imageToReturn = new WritableImage(reader, FRAMES * width, 0, width, height);
-			break;
-		case NORMAL_LEFT:
-			reader = spritesLeft.getPixelReader();
-			imageToReturn = new WritableImage(reader, width * currentFrame, 0, width, height);
-			break;
-		case NORMAL_RIGHT:
-			reader = spritesRight.getPixelReader();
-			imageToReturn = new WritableImage(reader, width * currentFrame, 0, width, height);
-			break;
-		case LEFT_NORMAL:
-			reader = spritesLeft.getPixelReader();
-			imageToReturn = new WritableImage(reader, (FRAMES * width) - (width * currentFrame), 0, width, height);
-			break;
-		case RIGHT_NORMAL:
-			reader = spritesRight.getPixelReader();
-			imageToReturn = new WritableImage(reader, (FRAMES * width) - (width * currentFrame), 0, width, height);
-			break;
-		default:
-			throw new IllegalStateException();
+		if (updateSprite()) {
+
+			switch (this.animationState) {
+			case NORMAL:
+				currentImage = spriteNormal;
+				break;
+			case LEFTMOST:
+				currentImage = spritesLeft[spritesLeft.length - 1];
+				break;
+			case RIGHTMOST:
+				currentImage = spritesRight[spritesRight.length - 1];
+				break;
+			case NORMAL_LEFT:
+				currentImage = spritesLeft[currentFrame];
+				break;
+			case NORMAL_RIGHT:
+				currentImage = spritesRight[currentFrame];
+				break;
+			case LEFT_NORMAL:
+				currentImage = spritesLeft[FRAMES - currentFrame];
+				break;
+			case RIGHT_NORMAL:
+				currentImage = spritesRight[FRAMES - currentFrame];
+				break;
+			default:
+				throw new IllegalStateException();
+			}
 		}
-		return imageToReturn;
+		if (currentImage == null) {
+			throw new IllegalStateException("Current image NULL!");
+		}
+		return currentImage;
 	}
 
 	public int getHeight() {
@@ -199,60 +211,55 @@ public class ShipVisual {
 	}
 
 	public int getX() {
-		return this.x-(width/2);
+		return this.x - (width / 2);
 	}
 
 	public int getY() {
-		return this.y-(height/2);
+		return this.y - (height / 2);
 	}
 
 	public void moveUp() {
-		exhaustOffset=+20;
+		exhaustOffset = +20;
 		y -= FORESPEED;
 	}
 
 	public void moveDown() {
-		exhaustOffset=-20;
+		exhaustOffset = -20;
 		y += SIDESPEED;
 	}
 
 	public void moveLeft() {
-		exhaustOffset=0;
+		exhaustOffset = 0;
 		x -= SIDESPEED;
 		animLeft();
 	}
 
 	public void moveRight() {
-		exhaustOffset=0;
+		exhaustOffset = 0;
 		x += SIDESPEED;
 		animRight();
 	}
 
 	public void stop() {
-		exhaustOffset=0;
+		exhaustOffset = 0;
 		animBackToNormal();
 	}
-	
-	public boolean hasRocket()
-	{
+
+	public boolean hasRocket() {
 		return rocket;
 	}
-	
-	public RocketSetup shootRocket()
-	{
-		rocket=false;
-		if(animationState.equals(State.NORMAL))
-		{
-			rocketDirection=!rocketDirection;
+
+	public RocketSetup shootRocket() {
+		rocket = false;
+		if (animationState.equals(State.NORMAL)) {
+			rocketDirection = !rocketDirection;
 		}
-		if(animationState.equals(State.LEFTMOST)||animationState.equals(State.NORMAL_LEFT))
-		{
-			rocketDirection=true;
+		if (animationState.equals(State.LEFTMOST) || animationState.equals(State.NORMAL_LEFT)) {
+			rocketDirection = true;
 		}
-		if(animationState.equals(State.RIGHTMOST)||animationState.equals(State.NORMAL_RIGHT))
-		{
-			rocketDirection=false;
+		if (animationState.equals(State.RIGHTMOST) || animationState.equals(State.NORMAL_RIGHT)) {
+			rocketDirection = false;
 		}
-		 return new RocketSetup(this.x, this.y, rocketDirection);
+		return new RocketSetup(this.x, this.y, rocketDirection);
 	}
 }

@@ -4,8 +4,11 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
+import java.util.Random;
 
+import com.github.hallgat89.application.CloudVisual;
 import com.github.hallgat89.application.RocketSetup;
 import com.github.hallgat89.application.RocketVisual;
 import com.github.hallgat89.application.ShipVisual;
@@ -35,24 +38,32 @@ import javafx.scene.paint.Paint;
 
 public class Main extends Application {
 
+	final int CLOUDSBACK = 1;
+	final int CLOUDSFORE = 1;
+
 	// Group root;
 	StackPane root;
 	Scene theScene;
 	Canvas theCanvas;
 	GraphicsContext gc;
 
+	Random rnd = new Random();
+
 	int window_x = 800;
 	int window_y = 800;
 
 	ShipVisual ship;
 
-	ArrayList<KeyCode> input = new ArrayList<>();
+	List<KeyCode> input = new ArrayList<>();
 
 	Queue<RocketVisual> rocketsInUse = new LinkedList<>();
 	Queue<RocketVisual> rocketsUnused = new LinkedList<>();
 
 	Image spaceBg;
 	BackgroundImage bg;
+
+	List<CloudVisual> cloudsInBack = new ArrayList<>();
+	List<CloudVisual> cloudsInFore = new ArrayList<>();
 
 	// ArrayList<RocketVisual> rockets = new ArrayList<>();
 
@@ -67,6 +78,18 @@ public class Main extends Application {
 	}
 
 	private void loadVisuals() {
+
+		final Image cim = new Image("cloud.png");
+		for (int i = 0; i < CLOUDSBACK; i++) {
+			CloudVisual cloud = new CloudVisual(cim);
+			cloud.setPosition(rnd.nextInt(window_x), rnd.nextInt(window_y));
+			cloudsInBack.add(cloud);
+		}
+		for (int i = 0; i < CLOUDSFORE; i++) {
+			CloudVisual cloud = new CloudVisual(cim);
+			cloud.setPosition(rnd.nextInt(window_x), rnd.nextInt(window_y));
+			cloudsInFore.add(cloud);
+		}
 
 		spaceBg = new Image("spacebg.jpg");
 		updateBg();
@@ -139,16 +162,41 @@ public class Main extends Application {
 			public void handle(long arg0) {
 				handleInput();
 				// gc.clearRect(0, 0, window_x, window_y);
+
 				clearRockets();
-				clearShip(); 
-				
+				clearShip();
+				clearExtras();
+
+				drawBackgroundExtras();
 				drawRockets();
 				drawShip();
-				
+				drawForegroundExtras();
+
 				cleanUp();
 			}
 
 		}.start();
+	}
+
+	private void drawBackgroundExtras() {
+		for (CloudVisual v : cloudsInBack) {
+			gc.drawImage(v.getImage(), v.getX(), v.getY());
+		}
+	}
+
+	private void drawForegroundExtras() {
+		for (CloudVisual v : cloudsInFore) {
+			gc.drawImage(v.getImage(), v.getX(), v.getY());
+		}
+	}
+
+	private void clearExtras() {
+		for (CloudVisual v : cloudsInBack) {
+			clearRect(v.getFullRect());
+		}
+		for (CloudVisual v : cloudsInFore) {
+			clearRect(v.getFullRect());
+		}
 	}
 
 	private void cleanUp() {
@@ -160,11 +208,23 @@ public class Main extends Application {
 				ri.remove();
 			}
 		}
+
+		for (CloudVisual v : cloudsInBack) {
+			if (v.getY() > window_y) {
+				v.setPosition(rnd.nextInt(window_x), -v.getHeight());
+			}
+		}
+		
+		for (CloudVisual v : cloudsInFore) {
+			if (v.getY() > window_y) {
+				v.setPosition(rnd.nextInt(window_x), -v.getHeight());
+			}
+		}
 	}
 
 	private void clearRockets() {
 		for (RocketVisual v : rocketsInUse) {
-				clearRect(v.getFullRect());
+			clearRect(v.getFullRect());
 		}
 	}
 

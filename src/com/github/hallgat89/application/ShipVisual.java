@@ -9,7 +9,7 @@ import javafx.scene.image.WritableImage;
 public class ShipVisual {
 
 	final int FRAMESPEED = 5;
-	final int FRAMES = 4; // n-1
+	final int FRAMES = 5; 
 	final int MAXACC = 10;
 	final int SIDESPEED = 5;
 	final int FORESPEED = 10;
@@ -79,15 +79,15 @@ public class ShipVisual {
 		this.height = (int) spriteNormal.getHeight();
 		this.spriteNormal = spriteNormal;
 		this.currentImage=spriteNormal;
-		this.spritesLeft = new Image[FRAMES + 1];
+		this.spritesLeft = new Image[FRAMES];
 		PixelReader readerLeft = spritesLeft.getPixelReader();
-		for (int i = 0; i <= FRAMES; i++) {
+		for (int i = 0; i < FRAMES; i++) {
 			this.spritesLeft[i] = new WritableImage(readerLeft, i * width, 0, width, height);
 		}
 		
-		this.spritesRight = new Image[FRAMES + 1];
+		this.spritesRight = new Image[FRAMES];
 		PixelReader readerRight = spritesRight.getPixelReader();
-		for (int i = 0; i <= FRAMES; i++) {
+		for (int i = 0; i < FRAMES; i++) {
 			this.spritesRight[i] = new WritableImage(readerRight, i * width, 0, width, height);
 		}
 		
@@ -138,7 +138,7 @@ public class ShipVisual {
 		if (frameCounter >= FRAMESPEED) {
 			wasupdate = true;
 			frameCounter = 0;
-			if (currentFrame < FRAMES) {
+			if (currentFrame < FRAMES-1) {
 				currentFrame++;
 			} else {
 				currentFrame = 0;

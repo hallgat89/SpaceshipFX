@@ -192,7 +192,9 @@ public class Main extends Application {
 	private void initEnvironment(Stage primaryStage) {
 		primaryStage.setTitle("Woooosh!");
 		primaryStage.setMaximized(true);
-
+		primaryStage.setMinHeight(window_y);
+		primaryStage.setMinWidth(window_x);
+		
 		root = new Group();
 		theScene = new Scene(root);
 		primaryStage.setScene(theScene);

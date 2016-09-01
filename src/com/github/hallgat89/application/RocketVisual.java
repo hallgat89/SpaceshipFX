@@ -1,9 +1,12 @@
 package com.github.hallgat89.application;
 
+import com.github.hallgat89.interfaces.HasRect;
+import com.github.hallgat89.interfaces.HasTargetRect;
+
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 
-public class RocketVisual {
+public class RocketVisual implements HasRect, HasTargetRect {
 
 	// final int DEFAULT_EXHAUST_OFFSET = 70;
 	final int VSPEED = 15;
@@ -47,19 +50,18 @@ public class RocketVisual {
 		return this.width;
 	}
 
-	public void setPos(int x, int y) {
-		this.x = x;
-		this.y = y;
-	}
 
+	@Override
 	public int getX() {
 		return this.x - (width / 2);
 	}
 
+	@Override
 	public int getY() {
 		return this.y - (height / 2);
 	}
 
+	@Override
 	public Image getImage() {
 		updateSprite();
 		return this.image;
@@ -96,13 +98,15 @@ public class RocketVisual {
 		return this.getY() + this.height;
 	}
 
+	@Override
 	public Rectangle2D getRect() {
 		return new Rectangle2D(getX(), getY(), width, height);
 	}
 
+	@Override
 	public Rectangle2D getFullRect() {
 		int w = (int) Math.max(this.width, exhaust.getWidth());
-		int h = (int) (this.height + exhaust.getHeight()+20);
+		int h = (int) (this.height + exhaust.getHeight() + 20);
 		return new Rectangle2D(this.x - w / 2, this.y - height / 2, w, h);
 
 	}
@@ -119,6 +123,13 @@ public class RocketVisual {
 		counter = 0;
 		exhaustOffset = 0;
 
+	}
+
+	@Override
+	public void setPosition(int x, int y) {
+		this.x = x;
+		this.y = y;
+		
 	}
 
 }

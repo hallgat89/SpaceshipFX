@@ -8,10 +8,12 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Random;
 
+import com.github.hallgat89.application.AsteroidVisual;
 import com.github.hallgat89.application.CloudVisual;
 import com.github.hallgat89.application.RocketSetup;
 import com.github.hallgat89.application.RocketVisual;
 import com.github.hallgat89.application.ShipVisual;
+import com.github.hallgat89.interfaces.HasRect;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -40,6 +42,7 @@ public class Main extends Application {
 
 	final int CLOUDSBACK = 1;
 	final int CLOUDSFORE = 2;
+	final int ASTEROIDS = 10;
 
 	// Group root;
 	StackPane root;
@@ -62,8 +65,8 @@ public class Main extends Application {
 	Image spaceBg;
 	BackgroundImage bg;
 
-	List<CloudVisual> cloudsInBack = new ArrayList<>();
-	List<CloudVisual> cloudsInFore = new ArrayList<>();
+	List<HasRect> backgroundElements = new ArrayList<>();
+	List<HasRect> foregroundElements = new ArrayList<>();
 
 	// ArrayList<RocketVisual> rockets = new ArrayList<>();
 
@@ -80,15 +83,23 @@ public class Main extends Application {
 	private void loadVisuals() {
 
 		final Image cim = new Image("cloud.png");
+		final Image ast1 = new Image("asteroid1.png");
+
 		for (int i = 0; i < CLOUDSBACK; i++) {
 			CloudVisual cloud = new CloudVisual(cim);
 			cloud.setPosition(rnd.nextInt(window_x), rnd.nextInt(window_y));
-			cloudsInBack.add(cloud);
+			backgroundElements.add(cloud);
 		}
 		for (int i = 0; i < CLOUDSFORE; i++) {
 			CloudVisual cloud = new CloudVisual(cim);
 			cloud.setPosition(rnd.nextInt(window_x), rnd.nextInt(window_y));
-			cloudsInFore.add(cloud);
+			foregroundElements.add(cloud);
+		}
+
+		for (int i = 0; i < ASTEROIDS; i++) {
+			AsteroidVisual asteroid = new AsteroidVisual(ast1);
+			asteroid.setPosition(-asteroid.getWidth(), rnd.nextInt(window_y));
+			backgroundElements.add(asteroid);
 		}
 
 		spaceBg = new Image("spacebg.jpg");
@@ -96,7 +107,7 @@ public class Main extends Application {
 
 		ship = new ShipVisual(new Image("fighter_left.png"), new Image("fighter_right.png"),
 				new Image("fighter_normal.png"), new Image("exhaust.png"));
-		ship.setPos(window_x / 2, window_y / 2);
+		ship.setPosition(window_x / 2, window_y / 2);
 	}
 
 	private void setupKeyHandlers() {
@@ -179,25 +190,28 @@ public class Main extends Application {
 	}
 
 	private void drawBackgroundExtras() {
-		for (CloudVisual v : cloudsInBack) {
+		for (HasRect v : backgroundElements) {
 			gc.drawImage(v.getImage(), v.getX(), v.getY());
 		}
 	}
 
 	private void drawForegroundExtras() {
-		for (CloudVisual v : cloudsInFore) {
+		for (HasRect v : foregroundElements) {
 			gc.drawImage(v.getImage(), v.getX(), v.getY());
 		}
 	}
 
+
+
 	private void clearExtras() {
-		for (CloudVisual v : cloudsInBack) {
+		for (HasRect v : backgroundElements) {
 			clearRect(v.getFullRect());
 		}
-		for (CloudVisual v : cloudsInFore) {
+		for (HasRect v : foregroundElements) {
 			clearRect(v.getFullRect());
 		}
 	}
+
 
 	private void cleanUp() {
 		Iterator<RocketVisual> ri = rocketsInUse.iterator();
@@ -209,17 +223,19 @@ public class Main extends Application {
 			}
 		}
 
-		for (CloudVisual v : cloudsInBack) {
+		for (HasRect v : backgroundElements) {
 			if (v.getY() > window_y) {
-				v.setPosition(rnd.nextInt(window_x*2)-window_x, -v.getHeight());
+				v.setPosition(rnd.nextInt(window_x * 2) - window_x, (int)-v.getFullRect().getHeight());
+			}
+		}
+
+		for (HasRect v : foregroundElements) {
+			if (v.getY() > window_y) {
+				v.setPosition(rnd.nextInt(window_x * 2) - window_x, (int)-v.getFullRect().getHeight());
 			}
 		}
 		
-		for (CloudVisual v : cloudsInFore) {
-			if (v.getY() > window_y) {
-				v.setPosition(rnd.nextInt(window_x*2)-window_x, -v.getHeight());
-			}
-		}
+
 	}
 
 	private void clearRockets() {
@@ -284,7 +300,7 @@ public class Main extends Application {
 					rocketsInUse.add(newRocket);
 				} else {
 					RocketVisual reusedRocket = rocketsUnused.poll();
-					reusedRocket.setPos(rs.x, rs.y);
+					reusedRocket.setPosition(rs.x, rs.y);
 					reusedRocket.setDirection(rs.left);
 					rocketsInUse.add(reusedRocket);
 				}

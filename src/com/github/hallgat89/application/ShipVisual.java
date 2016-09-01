@@ -2,12 +2,15 @@ package com.github.hallgat89.application;
 
 import java.nio.channels.IllegalSelectorException;
 
+import com.github.hallgat89.interfaces.HasRect;
+import com.github.hallgat89.interfaces.HasTargetRect;
+
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 
-public class ShipVisual {
+public class ShipVisual implements HasRect,HasTargetRect {
 
 	final int FRAMESPEED = 5;
 	final int FRAMES = 5; 
@@ -161,18 +164,20 @@ public class ShipVisual {
 		return this.y + exhaustOffset + DEFAULT_EXHAUST_OFFSET;
 	}
 	
+	@Override
 	public Rectangle2D getRect()
 	{
 		return new Rectangle2D(getX(), getY(), width, height);
 	}
 	
+	@Override
 	public Rectangle2D getFullRect()
 	{
 		return new Rectangle2D(getX(), getY(), width, height+exhaust.getHeight()+5);
 	}
 	
 
-
+	@Override
 	public Image getImage() {
 		if (updateSprite()) {
 
@@ -216,15 +221,12 @@ public class ShipVisual {
 		return this.width;
 	}
 
-	public void setPos(int x, int y) {
-		this.x = x;
-		this.y = y;
-	}
 
+	@Override
 	public int getX() {
 		return this.x - (width / 2);
 	}
-
+	@Override
 	public int getY() {
 		return this.y - (height / 2);
 	}
@@ -272,5 +274,12 @@ public class ShipVisual {
 			rocketDirection = false;
 		}
 		return new RocketSetup(this.x, this.y, rocketDirection);
+	}
+
+	@Override
+	public void setPosition(int x, int y) {
+		this.x = x;
+		this.y = y;
+		
 	}
 }

@@ -1,9 +1,11 @@
 package com.github.hallgat89.application;
 
+import com.github.hallgat89.interfaces.HasRect;
+
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 
-public class CloudVisual {
+public class CloudVisual implements HasRect {
 
 	public CloudVisual(int x, int y, Image image) {
 		super();
@@ -28,7 +30,7 @@ public class CloudVisual {
 		this.x = x;
 		this.y = y;
 	}
-
+	@Override
 	public Image getImage() {
 		updatePosition();
 		return this.image;
@@ -37,11 +39,11 @@ public class CloudVisual {
 	private void updatePosition() {
 		this.y += SPEED;
 	}
-
+	@Override
 	public int getX() {
 		return x;
 	}
-
+	@Override
 	public int getY() {
 		return y;
 	}
@@ -54,6 +56,7 @@ public class CloudVisual {
 		return (int) image.getHeight();
 	}
 
+	@Override
 	public Rectangle2D getFullRect()
 	{
 		return new Rectangle2D(x, y, getWidth(), getHeight());

@@ -127,7 +127,7 @@ public class Main extends Application {
 	private void updateBg() {
 		bg = new BackgroundImage(spaceBg, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
 				new BackgroundPosition(Side.LEFT, 0, false, Side.TOP, 0, false),
-				new BackgroundSize(window_x, window_y, false, false, false, false));
+				new BackgroundSize(window_x, window_y, false, false, true, false));
 
 		root.setBackground(new Background(bg));
 

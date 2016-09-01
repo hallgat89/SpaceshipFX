@@ -102,7 +102,7 @@ public class RocketVisual {
 
 	public Rectangle2D getFullRect() {
 		int w = (int) Math.max(this.width, exhaust.getWidth());
-		int h = (int) (this.height + exhaust.getHeight());
+		int h = (int) (this.height + exhaust.getHeight()+20);
 		return new Rectangle2D(this.x - w / 2, this.y - height / 2, w, h);
 
 	}

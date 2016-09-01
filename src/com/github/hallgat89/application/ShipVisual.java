@@ -282,4 +282,14 @@ public class ShipVisual implements HasRect,HasTargetRect {
 		this.y = y;
 		
 	}
+
+	@Override
+	public int getCenterX() {
+		return x;
+	}
+
+	@Override
+	public int getCenterY() {
+		return y;
+	}
 }

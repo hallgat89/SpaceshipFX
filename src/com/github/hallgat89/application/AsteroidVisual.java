@@ -63,4 +63,14 @@ public class AsteroidVisual implements HasRect, HasTargetRect {
 		
 	}
 
+	@Override
+	public int getCenterX() {
+		return x;
+	}
+
+	@Override
+	public int getCenterY() {
+		return y;
+	}
+
 }

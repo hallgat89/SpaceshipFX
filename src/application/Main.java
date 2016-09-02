@@ -191,17 +191,19 @@ public class Main extends Application {
 
 	private void drawBackgroundExtras() {
 		for (HasRect v : backgroundElements) {
-			gc.drawImage(v.getImage(), v.getX(), v.getY());
+			if (v.isVisible()) {
+				gc.drawImage(v.getImage(), v.getX(), v.getY());
+			}
 		}
 	}
 
 	private void drawForegroundExtras() {
 		for (HasRect v : foregroundElements) {
-			gc.drawImage(v.getImage(), v.getX(), v.getY());
+			if (v.isVisible()) {
+				gc.drawImage(v.getImage(), v.getX(), v.getY());
+			}
 		}
 	}
-
-
 
 	private void clearExtras() {
 		for (HasRect v : backgroundElements) {
@@ -212,29 +214,30 @@ public class Main extends Application {
 		}
 	}
 
-
 	private void cleanUp() {
 		Iterator<RocketVisual> ri = rocketsInUse.iterator();
 		while (ri.hasNext()) {
 			RocketVisual rv = ri.next();
 			if (rv.getY() < -rv.getFullRect().getHeight()) {
 				rocketsUnused.add(rv);
+				rv.setVisible(true);
 				ri.remove();
 			}
 		}
 
 		for (HasRect v : backgroundElements) {
 			if (v.getY() > window_y) {
-				v.setPosition(rnd.nextInt(window_x * 2) - window_x, (int)-v.getFullRect().getHeight());
+				v.setPosition(rnd.nextInt(window_x * 2) - window_x, (int) -v.getFullRect().getHeight());
+				v.setVisible(true);
 			}
 		}
 
 		for (HasRect v : foregroundElements) {
 			if (v.getY() > window_y) {
-				v.setPosition(rnd.nextInt(window_x * 2) - window_x, (int)-v.getFullRect().getHeight());
+				v.setPosition(rnd.nextInt(window_x * 2) - window_x, (int) -v.getFullRect().getHeight());
+				v.setVisible(true);
 			}
 		}
-		
 
 	}
 
@@ -255,10 +258,12 @@ public class Main extends Application {
 	private void drawRockets() {
 
 		for (RocketVisual v : rocketsInUse) {
-			if (v.hasExhaust()) {
-				gc.drawImage(v.getExhaust(), v.getExhaustX(), v.getExhaustY());
+			if (v.isVisible()) {
+				if (v.hasExhaust()) {
+					gc.drawImage(v.getExhaust(), v.getExhaustX(), v.getExhaustY());
+				}
+				gc.drawImage(v.getImage(), v.getX(), v.getY());
 			}
-			gc.drawImage(v.getImage(), v.getX(), v.getY());
 		}
 	}
 

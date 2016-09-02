@@ -10,10 +10,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 
-public class ShipVisual implements HasRect,HasTargetRect {
+public class ShipVisual implements HasTargetRect {
 
 	final int FRAMESPEED = 5;
-	final int FRAMES = 5; 
+	final int FRAMES = 5;
 	final int MAXACC = 10;
 	final int SIDESPEED = 5;
 	final int FORESPEED = 10;
@@ -29,6 +29,7 @@ public class ShipVisual implements HasRect,HasTargetRect {
 	int currentAcceleration = 0;
 	int reloadCounter = 0;
 	boolean rocket = true;
+	boolean visible = true;
 
 	final Image[] spritesLeft;
 	final Image[] spritesRight;
@@ -81,22 +82,22 @@ public class ShipVisual implements HasRect,HasTargetRect {
 		this.width = (int) spriteNormal.getWidth();
 		this.height = (int) spriteNormal.getHeight();
 		this.spriteNormal = spriteNormal;
-		this.currentImage=spriteNormal;
+		this.currentImage = spriteNormal;
 		this.spritesLeft = new Image[FRAMES];
 		PixelReader readerLeft = spritesLeft.getPixelReader();
 		for (int i = 0; i < FRAMES; i++) {
 			this.spritesLeft[i] = new WritableImage(readerLeft, i * width, 0, width, height);
 		}
-		
+
 		this.spritesRight = new Image[FRAMES];
 		PixelReader readerRight = spritesRight.getPixelReader();
 		for (int i = 0; i < FRAMES; i++) {
 			this.spritesRight[i] = new WritableImage(readerRight, i * width, 0, width, height);
 		}
-		
+
 		this.animationState = State.getDefault();
 	}
-	
+
 	private void animRight() {
 		if (animationState != State.NORMAL_RIGHT && animationState != State.RIGHTMOST) {
 			currentFrame = 0;
@@ -126,7 +127,6 @@ public class ShipVisual implements HasRect,HasTargetRect {
 		}
 	}
 
-
 	private boolean updateSprite() {
 		frameCounter++;
 		boolean wasupdate = false;
@@ -140,7 +140,7 @@ public class ShipVisual implements HasRect,HasTargetRect {
 		if (frameCounter >= FRAMESPEED) {
 			wasupdate = true;
 			frameCounter = 0;
-			if (currentFrame < FRAMES-1) {
+			if (currentFrame < FRAMES - 1) {
 				currentFrame++;
 			} else {
 				currentFrame = 0;
@@ -157,25 +157,22 @@ public class ShipVisual implements HasRect,HasTargetRect {
 	}
 
 	public int getExhaustX() {
-		return (int) (this.x+ - exhaust.getWidth() / 2);
+		return (int) (this.x + -exhaust.getWidth() / 2);
 	}
 
 	public int getExhaustY() {
 		return this.y + exhaustOffset + DEFAULT_EXHAUST_OFFSET;
 	}
-	
+
 	@Override
-	public Rectangle2D getRect()
-	{
+	public Rectangle2D getRect() {
 		return new Rectangle2D(getX(), getY(), width, height);
 	}
-	
+
 	@Override
-	public Rectangle2D getFullRect()
-	{
-		return new Rectangle2D(getX(), getY(), width, height+exhaust.getHeight()+5);
+	public Rectangle2D getFullRect() {
+		return new Rectangle2D(getX(), getY(), width, height + exhaust.getHeight() + 5);
 	}
-	
 
 	@Override
 	public Image getImage() {
@@ -221,11 +218,11 @@ public class ShipVisual implements HasRect,HasTargetRect {
 		return this.width;
 	}
 
-
 	@Override
 	public int getX() {
 		return this.x - (width / 2);
 	}
+
 	@Override
 	public int getY() {
 		return this.y - (height / 2);
@@ -280,7 +277,7 @@ public class ShipVisual implements HasRect,HasTargetRect {
 	public void setPosition(int x, int y) {
 		this.x = x;
 		this.y = y;
-		
+
 	}
 
 	@Override
@@ -291,5 +288,15 @@ public class ShipVisual implements HasRect,HasTargetRect {
 	@Override
 	public int getCenterY() {
 		return y;
+	}
+
+	@Override
+	public boolean isVisible() {
+		return visible;
+	}
+
+	@Override
+	public void setVisible(boolean visible) {
+		this.visible = visible;
 	}
 }

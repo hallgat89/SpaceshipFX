@@ -6,12 +6,13 @@ import com.github.hallgat89.interfaces.HasTargetRect;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 
-public class RocketVisual implements HasRect, HasTargetRect {
+public class RocketVisual implements HasTargetRect {
 
 	// final int DEFAULT_EXHAUST_OFFSET = 70;
 	final int VSPEED = 15;
 	final int HSPEED = 1;
 	final int INACTIVETIME = 50;
+	boolean visible = true;
 
 	int counter = 0;
 
@@ -49,7 +50,6 @@ public class RocketVisual implements HasRect, HasTargetRect {
 	public int getWidth() {
 		return this.width;
 	}
-
 
 	@Override
 	public int getX() {
@@ -129,7 +129,7 @@ public class RocketVisual implements HasRect, HasTargetRect {
 	public void setPosition(int x, int y) {
 		this.x = x;
 		this.y = y;
-		
+
 	}
 
 	@Override
@@ -140,6 +140,16 @@ public class RocketVisual implements HasRect, HasTargetRect {
 	@Override
 	public int getCenterY() {
 		return y;
+	}
+
+	@Override
+	public boolean isVisible() {
+		return visible;
+	}
+
+	@Override
+	public void setVisible(boolean visible) {
+		this.visible = visible;
 	}
 
 }

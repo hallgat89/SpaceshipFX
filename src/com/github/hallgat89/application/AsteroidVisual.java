@@ -6,13 +6,14 @@ import com.github.hallgat89.interfaces.HasTargetRect;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 
-public class AsteroidVisual implements HasRect, HasTargetRect {
+public class AsteroidVisual implements  HasTargetRect {
 
 	final int SPEED = 5;
 	final Image image;
 	int x = 0;
 	int y = 0;
-
+	boolean visible=true;
+	
 	public AsteroidVisual(Image i) {
 		this.image = i;
 	}
@@ -71,6 +72,16 @@ public class AsteroidVisual implements HasRect, HasTargetRect {
 	@Override
 	public int getCenterY() {
 		return y;
+	}
+
+	@Override
+	public boolean isVisible() {
+		return visible;
+	}
+
+	@Override
+	public void setVisible(boolean visible) {
+		this.visible=visible;
 	}
 
 }

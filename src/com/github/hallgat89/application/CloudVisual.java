@@ -23,7 +23,7 @@ public class CloudVisual implements HasRect {
 	final int SPEED = 10;
 	int x = 0;
 	int y = 0;
-
+	boolean visible=true;
 	final Image image;
 
 	public void setPosition(int x, int y) {
@@ -60,5 +60,15 @@ public class CloudVisual implements HasRect {
 	public Rectangle2D getFullRect()
 	{
 		return new Rectangle2D(x, y, getWidth(), getHeight());
+	}
+
+	@Override
+	public boolean isVisible() {
+		return visible;
+	}
+
+	@Override
+	public void setVisible(boolean visible) {
+		this.visible=visible;
 	}
 }

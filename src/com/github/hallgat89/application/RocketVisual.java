@@ -63,7 +63,7 @@ public class RocketVisual implements HasTargetRect {
 
 	@Override
 	public Image getImage() {
-		updateSprite();
+
 		return this.image;
 	}
 
@@ -94,7 +94,6 @@ public class RocketVisual implements HasTargetRect {
 	}
 
 	public int getExhaustY() {
-		// return this.getY() + exhaustOffset + DEFAULT_EXHAUST_OFFSET;
 		return this.getY() + this.height;
 	}
 
@@ -150,6 +149,11 @@ public class RocketVisual implements HasTargetRect {
 	@Override
 	public void setVisible(boolean visible) {
 		this.visible = visible;
+	}
+
+	@Override
+	public void update() {
+		updateSprite();		
 	}
 
 }

@@ -31,7 +31,6 @@ public class AsteroidVisual implements  HasTargetRect {
 	}
 
 	public Image getImage() {
-		updateSprite();
 		return image;
 	}
 
@@ -81,7 +80,14 @@ public class AsteroidVisual implements  HasTargetRect {
 
 	@Override
 	public void setVisible(boolean visible) {
+		System.out.println("visible:" +this.visible+"->"+visible);
 		this.visible=visible;
+	}
+
+	@Override
+	public void update() {
+		updateSprite();
+		
 	}
 
 }

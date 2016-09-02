@@ -32,7 +32,7 @@ public class CloudVisual implements HasRect {
 	}
 	@Override
 	public Image getImage() {
-		updatePosition();
+
 		return this.image;
 	}
 
@@ -70,5 +70,10 @@ public class CloudVisual implements HasRect {
 	@Override
 	public void setVisible(boolean visible) {
 		this.visible=visible;
+	}
+
+	@Override
+	public void update() {
+		updatePosition();		
 	}
 }

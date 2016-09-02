@@ -127,7 +127,7 @@ public class ShipVisual implements HasTargetRect {
 		}
 	}
 
-	private boolean updateSprite() {
+	private void updateSprite() {
 		frameCounter++;
 		boolean wasupdate = false;
 		if (!rocket)
@@ -149,35 +149,7 @@ public class ShipVisual implements HasTargetRect {
 				}
 			}
 		}
-		return wasupdate;
-	}
-
-	public Image getExhaust() {
-		return exhaust;
-	}
-
-	public int getExhaustX() {
-		return (int) (this.x + -exhaust.getWidth() / 2);
-	}
-
-	public int getExhaustY() {
-		return this.y + exhaustOffset + DEFAULT_EXHAUST_OFFSET;
-	}
-
-	@Override
-	public Rectangle2D getRect() {
-		return new Rectangle2D(getX(), getY(), width, height);
-	}
-
-	@Override
-	public Rectangle2D getFullRect() {
-		return new Rectangle2D(getX(), getY(), width, height + exhaust.getHeight() + 5);
-	}
-
-	@Override
-	public Image getImage() {
-		if (updateSprite()) {
-
+		if (wasupdate) {
 			switch (this.animationState) {
 			case NORMAL:
 				currentImage = spriteNormal;
@@ -204,6 +176,35 @@ public class ShipVisual implements HasTargetRect {
 				throw new IllegalStateException();
 			}
 		}
+
+	}
+
+	public Image getExhaust() {
+		return exhaust;
+	}
+
+	public int getExhaustX() {
+		return (int) (this.x + -exhaust.getWidth() / 2);
+	}
+
+	public int getExhaustY() {
+		return this.y + exhaustOffset + DEFAULT_EXHAUST_OFFSET;
+	}
+
+	@Override
+	public Rectangle2D getRect() {
+		return new Rectangle2D(getX(), getY(), width, height);
+	}
+
+	@Override
+	public Rectangle2D getFullRect() {
+		return new Rectangle2D(getX(), getY(), width, height + exhaust.getHeight() + 5);
+	}
+
+	@Override
+	public Image getImage() {
+		
+
 		if (currentImage == null) {
 			throw new IllegalStateException("Current image NULL!");
 		}
@@ -298,5 +299,11 @@ public class ShipVisual implements HasTargetRect {
 	@Override
 	public void setVisible(boolean visible) {
 		this.visible = visible;
+	}
+
+	@Override
+	public void update() {
+		updateSprite();
+		
 	}
 }

@@ -172,7 +172,6 @@ public class Main extends Application {
 			@Override
 			public void handle(long arg0) {
 				handleInput();
-				// gc.clearRect(0, 0, window_x, window_y);
 
 				clearRockets();
 				clearShip();
@@ -183,24 +182,42 @@ public class Main extends Application {
 				drawShip();
 				drawForegroundExtras();
 
+				collisionTest();
+
 				cleanUp();
 			}
 
 		}.start();
 	}
 
+	private void collisionTest() {
+		for (HasRect obstacle : backgroundElements) {
+			if (obstacle.isVisible() && obstacle instanceof AsteroidVisual) {
+				for (RocketVisual rocket : rocketsInUse) {
+					if (rocket.isVisible() && rocket.getRect().intersects(((AsteroidVisual) obstacle).getRect())) {
+						// BOOOM!!!
+						rocket.setVisible(false);
+						obstacle.setVisible(false);
+					}
+				}
+			}
+		}
+	}
+
 	private void drawBackgroundExtras() {
-		for (HasRect v : backgroundElements) {
-			if (v.isVisible()) {
-				gc.drawImage(v.getImage(), v.getX(), v.getY());
+		for (HasRect b : backgroundElements) {
+			b.update();
+			if (b.isVisible()) {
+				gc.drawImage(b.getImage(), b.getX(), b.getY());
 			}
 		}
 	}
 
 	private void drawForegroundExtras() {
-		for (HasRect v : foregroundElements) {
-			if (v.isVisible()) {
-				gc.drawImage(v.getImage(), v.getX(), v.getY());
+		for (HasRect f : foregroundElements) {
+			f.update();
+			if (f.isVisible()) {
+				gc.drawImage(f.getImage(), f.getX(), f.getY());
 			}
 		}
 	}
@@ -258,6 +275,7 @@ public class Main extends Application {
 	private void drawRockets() {
 
 		for (RocketVisual v : rocketsInUse) {
+			v.update();
 			if (v.isVisible()) {
 				if (v.hasExhaust()) {
 					gc.drawImage(v.getExhaust(), v.getExhaustX(), v.getExhaustY());
@@ -268,6 +286,7 @@ public class Main extends Application {
 	}
 
 	private void drawShip() {
+		ship.update();
 		gc.drawImage(ship.getExhaust(), ship.getExhaustX(), ship.getExhaustY());
 		gc.drawImage(ship.getImage(), ship.getX(), ship.getY());
 	}

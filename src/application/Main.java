@@ -10,6 +10,7 @@ import java.util.Random;
 
 import com.github.hallgat89.application.AsteroidVisual;
 import com.github.hallgat89.application.CloudVisual;
+import com.github.hallgat89.application.ExplosionVisual;
 import com.github.hallgat89.application.RocketSetup;
 import com.github.hallgat89.application.RocketVisual;
 import com.github.hallgat89.application.ShipVisual;
@@ -62,13 +63,16 @@ public class Main extends Application {
 	Queue<RocketVisual> rocketsInUse = new LinkedList<>();
 	Queue<RocketVisual> rocketsUnused = new LinkedList<>();
 
+	Queue<ExplosionVisual> explosionsInUse = new LinkedList<>();
+	Queue<ExplosionVisual> explosionsUnused = new LinkedList<>();
+
 	Image spaceBg;
 	BackgroundImage bg;
 
 	List<HasRect> backgroundElements = new ArrayList<>();
 	List<HasRect> foregroundElements = new ArrayList<>();
 
-	// ArrayList<RocketVisual> rockets = new ArrayList<>();
+	Image explosionFrames = new Image("explosion.png");
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -176,10 +180,12 @@ public class Main extends Application {
 				clearRockets();
 				clearShip();
 				clearExtras();
+				clearExplosions();
 
 				drawBackgroundExtras();
 				drawRockets();
 				drawShip();
+				drawExplosions();
 				drawForegroundExtras();
 
 				collisionTest();
@@ -190,12 +196,40 @@ public class Main extends Application {
 		}.start();
 	}
 
+	protected void drawExplosions() {
+
+		for (ExplosionVisual v : explosionsInUse) {
+			v.update();
+			if (v.isVisible()) {
+				gc.drawImage(v.getImage(), v.getX(), v.getY());
+			}
+		}
+	}
+
+	protected void clearExplosions() {
+		for (ExplosionVisual v : explosionsInUse) {
+			clearRect(v.getFullRect());
+		}
+
+	}
+
 	private void collisionTest() {
 		for (HasRect obstacle : backgroundElements) {
 			if (obstacle.isVisible() && obstacle instanceof AsteroidVisual) {
+				AsteroidVisual ca = (AsteroidVisual) obstacle;
 				for (RocketVisual rocket : rocketsInUse) {
 					if (rocket.isVisible() && rocket.getRect().intersects(((AsteroidVisual) obstacle).getRect())) {
 						// BOOOM!!!
+						if (explosionsUnused.isEmpty()) {
+							ExplosionVisual nev = new ExplosionVisual(explosionFrames, ca.getCenterX(),
+									ca.getCenterY());
+							explosionsInUse.add(nev);
+						} else {
+							ExplosionVisual ev = explosionsUnused.poll();
+							ev.setVisible(true);
+							ev.setPosition(ca.getCenterX(), ca.getCenterY());
+							explosionsInUse.add(ev);
+						}
 						rocket.setVisible(false);
 						obstacle.setVisible(false);
 					}
@@ -239,6 +273,16 @@ public class Main extends Application {
 				rocketsUnused.add(rv);
 				rv.setVisible(true);
 				ri.remove();
+			}
+		}
+
+		Iterator<ExplosionVisual> ei = explosionsInUse.iterator();
+		while (ei.hasNext()) {
+			ExplosionVisual rv = ei.next();
+			if (rv.getY() < -rv.getFullRect().getHeight()) {
+				explosionsUnused.add(rv);
+				rv.setVisible(true);
+				ei.remove();
 			}
 		}
 
